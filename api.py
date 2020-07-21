@@ -30,9 +30,9 @@ def str_to_tup(mystring):
 
 @app.route('/')
 def hello_world():
-   return 'Try \/classify'
+   return 'Flask API Server'
 
-@app.route('/classify', methods=['POST'])
+@app.route('/api/1.0/classify', methods=['POST'])
 def classify():
     # set the file as the data of the post request to our inference API
 
