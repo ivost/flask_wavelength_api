@@ -46,10 +46,13 @@ def classify():
     image = cv2.imdecode(np.fromstring(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
     
     # send the inference reply
+    data.seek(0)
     r=requests.post(URL, data=data)
 
     # receive the response from the inference engine
     data = r.json()
+
+    print(data)
 
     # extract the coordinates and label from the returned data
     results = data[0]
