@@ -41,11 +41,11 @@ def classify():
         data = request.files['file']
     except:
         response = jsonify({"Status": 500, "Message": "Error retrieving file."})
-        print("500: Error retrieving file parameter.")
         return response
 
+    image = cv2.imdecode(np.fromstring(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
+    
     # send the inference reply
-    print("calling the inference API")
     r=requests.post(URL, data=data)
 
     # receive the response from the inference engine
@@ -57,7 +57,7 @@ def classify():
         coordinates = str_to_tup(results[result])
         label = result
 
-    image = cv2.imdecode(np.fromstring(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
+    
     
     position = (10,50)
 
