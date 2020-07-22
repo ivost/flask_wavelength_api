@@ -4,6 +4,7 @@ import os , io , sys
 import numpy as np
 import cv2
 import base64
+import requests
 from werkzeug.utils import secure_filename
 
 sys.path.append('/usr/local/lib/python3.6/dist-packages/')
