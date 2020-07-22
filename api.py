@@ -1,6 +1,6 @@
 from flask import Flask, request , jsonify
 from PIL import Image
-import sys
+import sys, io
 import numpy as np
 import cv2
 import base64
