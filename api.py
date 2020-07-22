@@ -1,11 +1,11 @@
-from flask import Flask, render_template , request , jsonify
+from flask import Flask, request , jsonify
 from PIL import Image
-import os , io , sys
+import sys
 import numpy as np
 import cv2
 import base64
 import requests
-from werkzeug.utils import secure_filename
+
 
 sys.path.append('/usr/local/lib/python3.6/dist-packages/')
 
@@ -43,9 +43,6 @@ def classify():
         response = jsonify({"Status": 500, "Message": "Error retrieving file."})
         print("500: Error retrieving file parameter.")
         return response
-
-
-
 
     # send the inference reply
     print("calling the inference API")
