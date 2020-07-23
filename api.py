@@ -6,14 +6,6 @@ import cv2
 import base64
 import requests
 
-
-sys.path.append('/usr/local/lib/python3.6/dist-packages/')
-
-URL = "http://172.31.77.241:8080/predictions/fastrcnn"
-
-app = Flask(__name__)
-app.config["DEBUG"] = True
-
 # takes the coordinates as a string and returns a pair of tuples
 def str_to_tup(mystring):
     i = 0
@@ -29,14 +21,23 @@ def str_to_tup(mystring):
         return_list.append(tuple(temp_list))
     return return_list
 
+app = Flask(__name__)
+app.config["DEBUG"] = True
+
+sys.path.append('/usr/local/lib/python3.6/dist-packages/')
+
+try:
+    URL = open("config_values.txt",'r').readline().split('\n')[0]
+except:
+    response = "Error opening configuration file"
+    return response
+
 @app.route('/')
 def hello_world():
    return 'Flask API Server'
 
 @app.route('/api/1.0/classify', methods=['POST'])
 def classify():
-    # set the file as the data of the post request to our inference API
-
     try:
         data = request.files['file']
     except:
@@ -44,24 +45,22 @@ def classify():
         return response
 
     image = cv2.imdecode(np.fromstring(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
-    
+
     # send the inference reply
     data.seek(0)
     r=requests.post(URL, data=data)
 
     # receive the response from the inference engine
-    data = r.json()
+    response = r.json()
 
-    print(data)
+    print(response)
 
     # extract the coordinates and label from the returned data
-    results = data[0]
+    results = response[0]
     for result in results:
         coordinates = str_to_tup(results[result])
         label = result
 
-    
-    
     position = (10,50)
 
     cv2.putText(
@@ -75,7 +74,7 @@ def classify():
 
     start_point = (int(coordinates[0][0]), int(coordinates[0][1]))
     end_point = (int(coordinates[1][0]), int(coordinates[1][1]))
-    
+
     # Blue color in BGR
     color = (255, 0, 0)
 
