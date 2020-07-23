@@ -30,7 +30,7 @@ try:
     URL = open("config_values.txt",'r').readline().split('\n')[0]
 except:
     response = "Error opening configuration file"
-    return response
+    sys.exit(1)
 
 @app.route('/')
 def hello_world():
