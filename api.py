@@ -29,7 +29,7 @@ sys.path.append('/usr/local/lib/python3.6/dist-packages/')
 try:
     URL = open("config_values.txt",'r').readline().split('\n')[0]
 except:
-    print "Error reading configuration file"
+    print("Error reading configuration file")
     sys.exit(1)
 
 @app.route('/')
