@@ -28,7 +28,7 @@ sys.path.append('/usr/local/lib/python3.6/dist-packages/')
 
 try:
     URL = open("config_values.txt",'r').readline().split('\n')[0]
-except Exception, e:
+except: Exception, e
     print >> sys.stderr,  "Error opening configuration file"
     print >> sys.stderr, "Exception: %s" % str(e)
     sys.exit(1)
