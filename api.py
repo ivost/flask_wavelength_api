@@ -56,7 +56,7 @@ def classify():
 
     print(response)
 
-    if response.code
+    if response.code:
         print (response.code)
 
     # extract the coordinates and label from the returned data
