@@ -5,7 +5,6 @@ import numpy as np
 import cv2
 import base64
 import requests
-import boto3
 
 # takes the coordinates as a string and returns a pair of tuples
 def str_to_tup(mystring):
@@ -57,7 +56,7 @@ def classify():
     print(response)
 
     if response['code']:
-        print (response['code'])
+        return response
     else:
         # extract the coordinates and label from the returned data
         results = response[0]
@@ -88,10 +87,6 @@ def classify():
         # Using cv2.rectangle() method
         # Draw a rectangle with blue line borders of thickness of 2 px
         img = cv2.rectangle(image, start_point, end_point, color, thickness)
-
-        s3 = boto3.resource('s3')
-        object = s3.Object('my_bucket_name', 'my/key/including/filename.txt')
-        object.put(Body=img)
 
         img = Image.fromarray(img.astype("uint8"))
         rawBytes = io.BytesIO()
