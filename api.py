@@ -53,7 +53,7 @@ def classify():
     # receive the response from the inference engine
     response = r.json()
 
-    print(response + " is a " + type(response))
+    print(response)
 
 
     if response.has_key('code'):
