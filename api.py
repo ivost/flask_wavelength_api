@@ -24,7 +24,13 @@ def parse_coordinates(s):
     return tuple(tuple(int(v) for v in coord) for coord in box)
 
 try:
-    URL = open('config_values.txt','r').readline().split('\n')[0]
+    # read the first line in the configuration file to get the URL for the inference server
+    # line should be of the format: http://<server_ip_address>:<port>/predictions/<model_name>
+    
+    with open('config_values.txt', 'r') as f:
+    for line in f:
+        URL = line.strip()
+        break
 except:
     print('Error reading configuration file')
     sys.exit(1)
