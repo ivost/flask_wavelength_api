@@ -24,9 +24,9 @@ def parse_coordinates(s):
     return tuple(tuple(int(v) for v in coord) for coord in box)
 
 try:
-    URL = open("config_values.txt",'r').readline().split('\n')[0]
+    URL = open('config_values.txt','r').readline().split('\n')[0]
 except:
-    print("Error reading configuration file")
+    print('Error reading configuration file')
     sys.exit(1)
 
 @app.route('/')
@@ -38,7 +38,7 @@ def classify():
     try:
         data = request.files['file']
     except:
-        response = jsonify({"Status": 500, "Message": "Error retrieving file."})
+        response = jsonify({'code': 500, 'type': 'InternalServerException', 'message': 'Error retrieving file'})
         return response
 
     image = cv2.imdecode(np.fromstring(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
@@ -85,19 +85,20 @@ def classify():
         img = cv2.rectangle(image, start_point, end_point, color, thickness)
 
         # take the resulting image, convert it to png, and encode it in base64
-        img = Image.fromarray(img.astype("uint8"))
+        img = Image.fromarray(img.astype('uint8'))
         rawBytes = io.BytesIO()
-        img.save(rawBytes, "png")
+        img.save(rawBytes, 'png')
         rawBytes.seek(0)
         img_base64 = str(base64.b64encode(rawBytes.read()))
 
         # format our response
-        response = jsonify({ "code": 200,
-            "message": "OK",
-            "image": img_base64
+        response = jsonify({ 'code': 200,
+            'message': 'OK',
+            'type': 'Success',
+            'image': img_base64
             })
 
         # return the image, and response codes
         return response
 
-app.run(host="0.0.0.0")
+app.run(host='0.0.0.0')
