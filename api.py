@@ -6,25 +6,21 @@ import cv2
 import base64
 import requests
 
-# takes the coordinates as a string and returns a pair of tuples
-def str_to_tup(mystring):
-    i = 0
-    s = mystring
-
-    return_list = []
-    l = s.split('), (')
-    for item in l:
-        temp_list = item.strip('[]()').split(',')
-        for number in temp_list:
-            temp_list[i % 2] = number.strip('. ').split('.')[0]
-            i=i+1
-        return_list.append(tuple(temp_list))
-    return return_list
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
-sys.path.append('/usr/local/lib/python3.6/dist-packages/')
+def parse_coordinates(s):
+    """
+    Parses a string with box'es coordinates into
+    actual coordinate tuples.
+
+    Example:
+        >>> parse_coordinates("[(228.7825, 82.63463), (583.77545, 677.3058)]")
+        ((228, 82), (583, 677))
+    """
+    box = ast.literal_eval(s)
+    return tuple(tuple(int(v) for v in coord) for coord in box)
 
 try:
     URL = open("config_values.txt",'r').readline().split('\n')[0]
@@ -46,60 +42,61 @@ def classify():
 
     image = cv2.imdecode(np.fromstring(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
 
-    # send the inference reply
+    # send the image to the infernce server 
     data.seek(0)
     r=requests.post(URL, data=data)
 
     # receive the response from the inference engine
     response = r.json()
-
-    print(response)
-
+    print(response) # print response to console
 
     if 'code' in response:
         return response
     else:
-        # extract the coordinates and label from the returned data
+        # extract the coordinates and label of the detected object from the returned data
         results = response[0]
-        for result in results:
-            coordinates = str_to_tup(results[result])
-            label = result
-
+        label, coordinates = next(iter(results.items()))
+        coordinates = parse_coordinates(coordinates)
+        
+        # set the position where the text label will be written
         position = (10,50)
 
+        #write text onto image
         cv2.putText(
-            image, #numpy array on which text is written
-            label, #text
-            position, #position at which writing has to start
+            image,  
+            label, 
+            position, 
             cv2.FONT_HERSHEY_SIMPLEX, #font family
             1, #font size
             (209, 80, 0, 255), #font color
             3) #font stroke
 
-        start_point = (int(coordinates[0][0]), int(coordinates[0][1]))
-        end_point = (int(coordinates[1][0]), int(coordinates[1][1]))
+        #set the coordinates for the bounding box
+        start_point, end_point = coordinates
 
-        # Blue color in BGR
+        # Box clolor will be blue
         color = (255, 0, 0)
 
         # Line thickness of 2 px
         thickness = 2
 
-        # Using cv2.rectangle() method
-        # Draw a rectangle with blue line borders of thickness of 2 px
+        # Draw a rectangle with blue borders of thickness of 2 px
         img = cv2.rectangle(image, start_point, end_point, color, thickness)
 
+        # take the resulting image, convert it to png, and encode it in base64
         img = Image.fromarray(img.astype("uint8"))
         rawBytes = io.BytesIO()
         img.save(rawBytes, "png")
         rawBytes.seek(0)
         img_base64 = str(base64.b64encode(rawBytes.read()))
 
+        # format our response
         response = jsonify({ "code": 200,
             "message": "OK",
             "image": img_base64
             })
 
+        # return the image, and response codes
         return response
 
 app.run(host="0.0.0.0")
