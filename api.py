@@ -5,6 +5,7 @@ import numpy as np
 import cv2
 import base64
 import requests
+import ast
 
 
 app = Flask(__name__)
