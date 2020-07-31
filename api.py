@@ -51,7 +51,9 @@ def classify():
 
     # convert response to json
     response = r.json()
-    print('Response received from inference server at: ' + URL + ': ' + response) # print response to console
+    # print response to console
+    print('Response received from inference server at: ' + URL + ': ')
+    print(response) 
 
     # if response has a key named 'code' we have an error otherwise with have a list of objects detected in the image
     if 'code' in response:
