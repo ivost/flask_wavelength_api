@@ -49,7 +49,7 @@ def classify():
     data.seek(0)
     r=requests.post(URL, data=data)
 
-    # receive the response from the inference engine
+    # convert response to json
     response = r.json()
     print('Response received from inference server at: ' + URL + ': ' + response) # print response to console
 
