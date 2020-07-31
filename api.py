@@ -45,7 +45,7 @@ def classify():
 
     image = cv2.imdecode(np.fromstring(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
 
-    # send the image to the infernce server 
+    # send the image to the infernce server and store the response in 'r'
     data.seek(0)
     r=requests.post(URL, data=data)
 
