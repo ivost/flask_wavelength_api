@@ -1,11 +1,7 @@
 from flask import Flask, request , jsonify
 from PIL import Image
-import sys, io
 import numpy as np
-import cv2
-import base64
-import requests
-import ast
+import sys, io, cv2, base64, requests, ast
 
 
 app = Flask(__name__)
@@ -57,10 +53,11 @@ def classify():
     response = r.json()
     print(response) # print response to console
 
+    # if response has a key named 'code' we have an error otherwise with have a list of objects detected in the image
     if 'code' in response:
         return response
     else:
-        # extract the coordinates and label of the detected object from the returned data
+        # extract the coordinates and label of the first detected object from the returned data
         results = response[0]
         label, coordinates = next(iter(results.items()))
         coordinates = parse_coordinates(coordinates)
