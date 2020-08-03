@@ -1,10 +1,11 @@
 from flask import Flask, request , jsonify
 from PIL import Image
+from flask_cors import CORS
 import numpy as np
 import sys, io, cv2, base64, requests, ast
 
-
 app = Flask(__name__)
+cors = CORS(app)
 app.config["DEBUG"] = True
 
 def parse_coordinates(s):
