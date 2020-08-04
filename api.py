@@ -88,7 +88,8 @@ def classify():
         thickness = 2
 
         # Draw a rectangle with blue borders of thickness of 2 px
-        img = cv2.rectangle(image, start_point, end_point, color, thickness)
+        rectimg = cv2.rectangle(image, start_point, end_point, color, thickness)
+        img = cv2.cvtColor(rectimg, cv2.COLOR_BGR2RGB)
 
         # take the resulting image, convert it to png, and encode it in base64
         img = Image.fromarray(img.astype('uint8'))
