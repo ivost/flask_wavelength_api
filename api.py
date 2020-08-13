@@ -8,18 +8,6 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config["DEBUG"] = True
 
-def parse_coordinates(s):
-    """
-    Parses a string with box'es coordinates into
-    actual coordinate tuples.
-
-    Example:
-        >>> parse_coordinates("[(228.7825, 82.63463), (583.77545, 677.3058)]")
-        ((228, 82), (583, 677))
-    """
-    box = ast.literal_eval(s)
-    return tuple(tuple(int(v) for v in coord) for coord in box)
-
 try:
     # read the first line in the configuration file to get the URL for the inference server
     # line should be of the format: http://<server_ip_address>:<port>/predictions/<model_name>
@@ -49,11 +37,10 @@ def classify():
     # send the image to the infernce server and store the response in 'r'
     data.seek(0)
     r=requests.post(URL, data=data)
-
-    # convert response to json
-    response = r.json()
+    
     # print response to console
     print('Response received from inference server at: ' + URL + ': ')
+    response=r.json()
     print(response) 
 
     # if response has a key named 'code' we have an error otherwise with have a list of objects detected in the image
@@ -62,8 +49,16 @@ def classify():
     else:
         # extract the coordinates and label of the first detected object from the returned data
         results = response[0]
-        label, coordinates = next(iter(results.items()))
-        coordinates = parse_coordinates(coordinates)
+
+        label=next(iter(results))
+        top_x=int(results[label][0])
+        top_y=int(results[label][1])
+        bottom_x=int(results[label][2])
+        bottom_y=int(results[label][3])
+
+        # set the corners of the bounding rectangle
+        start_point = (top_x, top_y)
+        end_point = (bottom_x, bottom_y)
         
         # set the position where the text label will be written
         position = (10,50)
@@ -77,9 +72,6 @@ def classify():
             1, #font size
             (209, 80, 0, 255), #font color
             3) #font stroke
-
-        #set the coordinates for the bounding box
-        start_point, end_point = coordinates
 
         # Box clolor will be blue
         color = (255, 0, 0)
